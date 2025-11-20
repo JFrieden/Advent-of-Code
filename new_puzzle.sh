@@ -62,8 +62,11 @@ case "$LANG" in
 esac
 
 # ----------------------------- Generate Readme ----------------------------- #
-cp ../../templates/puzzle_readme.md readme.md
-sed -i "s/{{YEAR}}/$YEAR/g" readme.md
-sed -i "s/{{DAY}}/$DAY/g" readme.md
-sed -i "s/{{NAME}}/$NAME/g" readme.md
-sed -i "s/{{LANGUAGE}}/$LANG/g" readme.md
+
+if [[ ! -f "readme.md" ]]; then
+    cp ../../templates/puzzle_readme.md readme.md
+    sed -i "s/{{YEAR}}/$YEAR/g" readme.md
+    sed -i "s/{{DAY}}/$DAY/g" readme.md
+    sed -i "s/{{NAME}}/$NAME/g" readme.md
+    sed -i "s/{{LANGUAGE}}/$LANG/g" readme.md
+fi
