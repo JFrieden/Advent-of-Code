@@ -42,22 +42,34 @@ echo -n "Language (C, Python, Java, etc.): "
 read LANG
 case "$LANG" in
     "Python"|"python")
-        if [[ ! -f "answer.py" ]]; then
-            cp ../../templates/template.py answer.py
+        if [[ ! -f "pt1.py" ]]; then
+            cp ../../templates/template.py pt1.py
+        fi
+        if [[ ! -f "pt2.py" ]]; then
+            cp ../../templates/template.py pt2.py
         fi ;;
     "C"|"c")
-        if [[ ! -f "answer.c" ]]; then
-            cp ../../templates/template.c answer.c
-        fi ;;
+        if [[ ! -f "pt1.c" ]]; then
+            cp ../../templates/template.c pt1.c
+        fi 
+        if [[ ! -f "pt2.c" ]]; then
+            cp ../../templates/template.c pt2.c
+        fi;;
     "Java"|"java")
-        if [[ ! -f "answer.java" ]]; then
-            cp ../../templates/template.java answer.java
-        fi ;;
+        if [[ ! -f "pt1.java" ]]; then
+            cp ../../templates/template.java pt1.java
+        fi 
+        if [[ ! -f "pt2.java" ]]; then
+            cp ../../templates/template.java pt2.java
+        fi;;
     *)
-        if [[ ! -f "answer.txt" ]]; then
-            touch "answer.txt"
+        if [[ ! -f "pt1.txt" ]]; then
+            touch "pt1.txt"
         fi
-        echo "Unsupported language: $LANG. No template copied."
+        if [[ ! -f "pt2.txt" ]]; then
+            touch "pt2".txt
+        fi
+        echo "Unsupported language: $LANG. Creating generic pt1 and pt2 .txt files."
         ;;
 esac
 
