@@ -95,14 +95,64 @@ void merge_sort(int arr[], int left, int right) {
     }
 }
 
-int* element_wise_abs_diff(int* arr1, int* arr2, const int n){
-    int *ret_arr = (int *)malloc(n * sizeof(int));
-    for(int i = 0; i < n; i++){
-        ret_arr[i] = abs(arr1[i] - arr2[i]);
+struct occurrence_counter{
+    int key;
+    int arr1_count;
+    int arr2_count;
+};
+
+struct occurrence_counter *get_counts(int arr1[], int arr2[], int N, int *out_size){
+    
+    struct occurrence_counter *counter = malloc(N * sizeof(struct occurrence_counter));
+    
+    merge_sort(arr1, 0, N-1);
+    merge_sort(arr2, 0, N-1);
+    
+    int j = 0;
+    // Find occurrences in arr1
+    for(int i = 0; i < N; i++){
+        if(i == 0 || arr1[i] != arr1[i-1]){
+            counter[j].key = arr1[i];
+            counter[j].arr1_count = 1;
+            counter[j].arr2_count = 0;
+            ++j;
+        }
+        else{
+            counter[j-1].arr1_count = counter[j-1].arr1_count + 1;
+        }   
     }
-    return ret_arr;
+
+    int ctr_size = j;
+
+    // Find occurrences in arr2
+    j = 0;
+    for(int i = 0; i < N; i++){
+        if (arr2[i] == counter[j].key){
+            counter[j].arr2_count++;
+        }
+        // always looking at smallest unseen num in arr2, if bigger, 
+        // time to check next counter key against same number
+        else if((arr2[i] > counter[j].key) && (j < ctr_size)){
+            j++;
+            i--;
+        // always looking at smallest unseen num in arr2, if smaller, 
+        // time to check next against same counter key.
+        }else if (arr2[i] < counter[j].key){
+            continue;
+        }
+    }
+
+    *out_size = ctr_size;
+    return counter;
 }
 
+int compute_and_sum_similarity(struct occurrence_counter *counter, int N){
+    int sum = 0;
+    for(int i = 0; i < N; i++){
+        sum += counter[i].key * counter[i].arr1_count * counter[i].arr2_count;
+    }
+    return sum;
+}
 /* ------------------------------------------------------------------------- */
 /* --------------------------------- Tests --------------------------------- */
 
@@ -116,42 +166,13 @@ int main() {
     int N[1] = {0};
 
     read_input("input.txt", arr1, arr2, N);
+    int arrLen = N[0]-1; //N is modified to the final size of the arrays
 
-    // printf("N: %d\n", N[0]);
-    // printf("Arr 1: ");
-    // for(int i = 0; i < N[0]; i++){
-    //     printf("%d ", arr1[i]);
-    // }
-    // printf("\n");
-    // printf("Arr 2: ");
-    // for(int i = 0; i < N[0]; i++){
-    //     printf("%d ", arr2[i]);
-    // }
-    // printf("\n");
+    int counter_out_size;
+    struct occurrence_counter *counter = get_counts(arr1, arr2, N[0], &counter_out_size);
+    int sum = compute_and_sum_similarity(counter, counter_out_size);
 
-    int arrLen = N[0]-1;
-    merge_sort(arr1, 0, arrLen);
-    merge_sort(arr2, 0, arrLen);
-
-    // printf("Sorted Arr 1: ");
-    // for(int i = 0; i < N[0]; i++){
-    //     printf("%d ", arr1[i]);
-    //     }
-    // printf("\n");
-    // printf("Sorted Arr 2: ");
-    // for(int i = 0; i < N[0]; i++){
-    //     printf("%d ", arr2[i]);
-    //     }
-    // printf("\n");
-
-
-    int *dists = element_wise_abs_diff(arr1, arr2, N[0]);
-    int total_dist = 0;
-    for (int i = 0; i < N[0]; i++) {
-        total_dist += dists[i];
-    }
-
-    printf("Pt 1 Answer: %d", total_dist);
+    printf("Pt 2 Answer: %d", sum);
 
     
     return 0;
